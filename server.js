@@ -5,6 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,13 +20,13 @@ app.use(session({
   secret: SESSION_SECRET,
   store: new RedisStore()
 }));
+app.use(methodOverride('_method'));
 
 app.use(userRoutes);
 app.use((req, res, next) => {
     res.locals.user = req.session.user || {email: 'Guest'};
     next();
 })
-
 app.get('/', (req, res) => {
   res.render('index');
 });
